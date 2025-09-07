@@ -2,20 +2,72 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Overlay Admin</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 400px;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1.5rem;
+      background-color: #5c33ff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #7b5fff;
+    }
+  </style>
 </head>
 <body>
-  <h1>Text für Overlay setzen</h1>
-  <input type="text" id="input" placeholder="Text eingeben" style="width:300px;">
-  <button onclick="send()">Senden</button>
+  <h1>Overlay Admin Panel</h1>
+
+  <label for="title">Titeltext:</label>
+  <input type="text" id="title" placeholder="z. B. Finale startet gleich">
+
+  <label for="points">Punkte:</label>
+  <input type="number" id="points" value="0">
+
+  <label for="status">Status:</label>
+  <select id="status">
+    <option value="bereit">Bereit</option>
+    <option value="läuft">Läuft</option>
+    <option value="pause">Pause</option>
+  </select>
+
+  <button onclick="send()">Senden an Overlay</button>
 
   <script>
-    const ws = new WebSocket('ws://' + window.location.hostname + ':3000');
+    const ws = new WebSocket('wss://' + window.location.host);
+
     function send() {
-      const input = document.getElementById('input');
-      ws.send(input.value);
+      const payload = {
+        title: document.getElementById('title').value,
+        points: document.getElementById('points').value,
+        status: document.getElementById('status').value
+      };
+      ws.send(JSON.stringify(payload));
     }
   </script>
 </body>

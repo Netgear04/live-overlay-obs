@@ -2,27 +2,45 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Overlay Anzeige</title>
   <style>
     body {
+      margin: 0;
       background: transparent;
       color: white;
-      font-size: 48px;
       font-family: sans-serif;
       text-align: center;
-      padding-top: 30vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100vh;
+      font-size: 2rem;
+    }
+    .status {
+      font-weight: bold;
+      margin-top: 1rem;
+      font-size: 1.5rem;
     }
   </style>
 </head>
 <body>
-  <div id="output">Warte auf Text ...</div>
+  <div id="title">Titel wird geladen…</div>
+  <div id="points">Punkte: 0</div>
+  <div class="status" id="status">Status: -</div>
+
   <script>
-    const output = document.getElementById('output');
-    const ws = new WebSocket('ws://' + window.location.hostname + ':3000');
+    const ws = new WebSocket('wss://' + window.location.host);
     ws.onmessage = (event) => {
-      output.textContent = event.data;
+      try {
+        const data = JSON.parse(event.data);
+        document.getElementById('title').textContent = data.title || '';
+        document.getElementById('points').textContent = 'Punkte: ' + (data.points || 0);
+        document.getElementById('status').textContent = 'Status: ' + (data.status || '-');
+      } catch (e) {
+        console.error('Fehler beim Parsen der Nachricht:', e);
+      }
     };
   </script>
 </body>
