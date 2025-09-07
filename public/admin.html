@@ -70,19 +70,20 @@
     };
 
     function send() {
+      if (ws.readyState !== WebSocket.OPEN) {
+        console.warn("❌ WebSocket ist nicht verbunden:", ws.readyState);
+        alert("WebSocket nicht verbunden – bitte Seite neu laden.");
+        return;
+      }
+
       const payload = {
         title: document.getElementById('title').value,
         points: document.getElementById('points').value,
         status: document.getElementById('status').value
       };
 
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(payload));
-        console.log("⬆️ Gesendet:", payload);
-      } else {
-        console.warn("⚠️ WebSocket nicht verbunden:", ws.readyState);
-        alert("WebSocket nicht verbunden – bitte Seite neu laden.");
-      }
+      ws.send(JSON.stringify(payload));
+      console.log("⬆️ Gesendet:", payload);
     }
   </script>
 </body>
